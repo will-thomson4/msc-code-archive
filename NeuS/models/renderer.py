@@ -286,17 +286,9 @@ class NeuSRenderer:
         batch_size = len(rays_o)
         sample_dist = 2.0 / self.n_samples   # Assuming the region of interest is a unit sphere
 
-        # Depth implementation
-        # I assume that near and far here will be a np array of near and far values for each ray, so we need the correponding depths for each ray
-        # and then if depth is bigger (closer) we can reduce the far value and if depth is smaller (further) we can reduce the near value? And then do less 
-        # samples?
-        #print(near.shape, far.shape)
         z_vals = torch.linspace(0.0, 1.0, self.n_samples)
-        # Sample z values between near and far with these uniform samples
 
         z_vals = near + (far - near) * z_vals[None, :]
-        # Now we need to trim z_vals to be within the specified depth range (Probably easiest to just decrease number of samples, 
-        # and try to improve estimates for near and far)
 
         z_vals_outside = None
         if self.n_outside > 0:

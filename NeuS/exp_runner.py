@@ -264,7 +264,7 @@ class Runner:
         rays_o, rays_d, depth  = self.dataset.gen_rays_at(idx, resolution_level=resolution_level)
         H, W, _ = rays_o.shape
 
-        # # ##########
+        # # ########## For Plotting out midpoint and dpeth heatmaps
         # a = torch.sum(rays_d**2, dim=-1, keepdim=True)
         # b = 2.0 * torch.sum(rays_o * rays_d, dim=-1, keepdim=True)
         # mid = 0.5 * (-b) / a
@@ -385,8 +385,6 @@ class Runner:
         vertices, triangles =\
             self.renderer.extract_geometry(bound_min, bound_max, resolution=resolution, threshold=threshold)
         os.makedirs(os.path.join(self.base_exp_dir, 'meshes'), exist_ok=True)
-
-        #Query the vertices before world space transformation when doing colour reconstruction.
 
         if world_space:
             vertices = vertices * self.dataset.scale_mats_np[0][0, 0] + self.dataset.scale_mats_np[0][:3, 3][None]

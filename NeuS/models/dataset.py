@@ -179,19 +179,16 @@ class Dataset:
 
     #This function is edited in this MSc project inform ray sampling
     def near_far_from_sphere(self, rays_o, rays_d, depth = None):
-        #rays_o is origin of the ray, rays_d is the direction of the ray
-        
-        #Summing the direction squared 
         a = torch.sum(rays_d**2, dim=-1, keepdim=True)
         b = 2.0 * torch.sum(rays_o * rays_d, dim=-1, keepdim=True)
         mid = 0.5 * (-b) / a
 
-        # #Use depth to inform mid
-        # if depth is not None:
-        #     depth = depth.to(device='cuda')
+        #Use depth to inform mid
+        if depth is not None:
+            depth = depth.to(device='cuda')
 
-        #     depth = torch.unsqueeze(depth, 1)
-        #     mid = mid * depth
+            depth = torch.unsqueeze(depth, 1)
+            mid = mid * depth
 
         near = mid - 1
         far = mid + 1
