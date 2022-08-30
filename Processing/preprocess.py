@@ -6,8 +6,6 @@ import numpy as np
 from PIL import Image
 
 
-# #TODO Clean up a bit, split into functions
-
 #Create output and intermediate directories
 def create_dirs(path):
     try:
@@ -24,19 +22,17 @@ create_dirs('intermediate')
 depth_path = './raw-data/Depth'
 
 # Depth data parameters
-w = 640
-h = 480
+W = 640
+H = 480
 
 #This section inspired by mantoone and their work on iPad depth streaming
 #see https://github.com/mantoone/DepthCapture
-
 with open(depth_path, 'rb') as depth_file:
     data = zlib.decompress(depth_file.read(), -15)
  
+FRAME_COUNT = int(len(data) / W / H / 2)
 
-FRAME_COUNT = int(len(data) / w / h / 2)
-
-frames = np.frombuffer(data, np.float16).reshape(FRAME_COUNT,h,w).copy()
+frames = np.frombuffer(data, np.float16).reshape(FRAME_COUNT,H,W).copy()
 frames = np.nan_to_num(frames, 0)
 maxim = frames.max()
 imgs = (frames / maxim * 255.0).astype('uint8')
@@ -59,7 +55,7 @@ create_dirs('intermediate/unprocessed-imgs')
 TRIM_FRAME = 20
 SAMPLE_RATE = 10
 
-#Loop over video first to count frames, could check video meta data
+#Loop over video first to count frames
 total_frames = 0
 while(True):
     ret, frame = cap.read()
@@ -70,7 +66,6 @@ while(True):
 
 cap.release()
 cv2.destroyAllWindows()
-
 
 #Read RGB video in, sample out frames and same to unprocessed-imgs
 cap = cv2.VideoCapture('./raw-data/output.mov')
@@ -150,13 +145,13 @@ for count, img in enumerate(os.listdir('intermediate/unprocessed-imgs')):
     image_input = cv2.imread(depth, cv2.IMREAD_GRAYSCALE)
 
     # Calculate the mean of each channel and use that to calculate threshold
-    channels = cv2.mean(image_input)
-    thresh = channels[0]
+    mean_intensity = cv2.mean(image_input)
+    thresh = mean_intensity[0]
 
-    th, im_th = cv2.threshold(image_input, thresh, 255, cv2.THRESH_BINARY_INV)
+    th, im_thesh = cv2.threshold(image_input, thresh, 255, cv2.THRESH_BINARY_INV)
 
-    im_floodfill = im_th.copy()
-    h, w = im_th.shape[:2]
+    im_floodfill = im_thesh.copy()
+    h, w = im_thesh.shape[:2]
     mask = np.zeros((h+2, w+2), np.uint8)
 
     # Invert image
@@ -167,7 +162,7 @@ for count, img in enumerate(os.listdir('intermediate/unprocessed-imgs')):
     cv2.floodFill(im_floodfill, mask, (0,0), 255)
 
     # & the images to fill in the gaps
-    mask = im_th & im_floodfill
+    mask = im_thesh & im_floodfill
     mask = cv2.bitwise_not(mask)
 
     #resize mask to be 1800 x 2400
@@ -180,9 +175,3 @@ for count, img in enumerate(os.listdir('intermediate/unprocessed-imgs')):
     print("Creating mask: " + mask_name)
 
     cv2.imwrite(mask_name, smoothed)
-
-
-    cv2.imwrite("thresholded.png", im_th)
-    cv2.imwrite("inv.png", im_inv)
-    cv2.imwrite("floodfilled.png", im_floodfill)
-    cv2.imwrite("smoothed.png", smoothed)
