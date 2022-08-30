@@ -1,8 +1,8 @@
 # msc-code-archive
-Code Archive for Imperial College London MSc Computing Individual Research Project
+Code archive for Imperial College London MSc Computing Individual Research Project.
 
 /iPad
-Inlcudes the code for the iPad application used to stream depth and video data. Inspiration for many of the depth streaming functions taken from https://github.com/mantoone/DepthCapture , but with adaptation for some bugs as well as a UI adaptation for the larger iPad screen.
+Includes the code for the iPad application used to stream depth and video data. Inspiration for many of the depth streaming functions taken from https://github.com/mantoone/DepthCapture , but with adaptation for some bugs as well as a UI adaptation for the larger iPad screen.
 
 /Processing
 Includes code for image, mask, depth map and point cloud processing, as outlined in the report. Includes use of the Facer library for image segmentation, see their work here https://github.com/FacePerceiver/facer.
