@@ -1,7 +1,7 @@
 # msc-code-archive
 Code archive for Imperial College London MSc Computing Individual Research Project.
 
-/iPad
+## /iPad
 Includes the code for the iPad application used to stream depth and video data. Inspiration for many of the depth streaming functions taken from https://github.com/mantoone/DepthCapture , but with adaptation for some bugs as well as a UI adaptation for the larger iPad screen.
 
 ## /Processing
